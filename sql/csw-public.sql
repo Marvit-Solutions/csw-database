@@ -218,7 +218,7 @@ CREATE TABLE IF NOT EXISTS public.user_details
     user_id text COLLATE pg_catalog."default" NOT NULL,
     name character varying(100) COLLATE pg_catalog."default" NOT NULL,
     phone_number character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    profile_picture text COLLATE pg_catalog."default" NOT NULL DEFAULT 'assets/img/users/profile/account.png'::text,
+    profile_picture text COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,

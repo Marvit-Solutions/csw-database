@@ -3,128 +3,156 @@
 BEGIN;
 
 
-ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS role_user_fk;
+ALTER TABLE IF EXISTS exercise.answers DROP CONSTRAINT IF EXISTS choice_answer_fk;
+
+ALTER TABLE IF EXISTS exercise.answers DROP CONSTRAINT IF EXISTS submission_answer_fk;
+
+ALTER TABLE IF EXISTS exercise.choices DROP CONSTRAINT IF EXISTS question_choice_fk;
+
+ALTER TABLE IF EXISTS exercise.exercises DROP CONSTRAINT IF EXISTS test_type_exercise_fk;
+
+ALTER TABLE IF EXISTS exercise.questions DROP CONSTRAINT IF EXISTS exercise_question_fk;
+
+ALTER TABLE IF EXISTS exercise.scores DROP CONSTRAINT IF EXISTS submission_score_fk;
+
+ALTER TABLE IF EXISTS exercise.submissions DROP CONSTRAINT IF EXISTS exercise_submission_fk;
+
+ALTER TABLE IF EXISTS exercise.submissions DROP CONSTRAINT IF EXISTS user_submission_fk;
+
+ALTER TABLE IF EXISTS public.addresses DROP CONSTRAINT IF EXISTS user_detail_address_fk;
+
+ALTER TABLE IF EXISTS public.class_user_plans DROP CONSTRAINT IF EXISTS plan_class_user_plan_fk;
+
+ALTER TABLE IF EXISTS public.class_user_plans DROP CONSTRAINT IF EXISTS user_class_user_plan_fk;
+
+ALTER TABLE IF EXISTS public.plans DROP CONSTRAINT IF EXISTS module_sub_plan_fk;
+
+ALTER TABLE IF EXISTS public.schedules DROP CONSTRAINT IF EXISTS class_user_plan_schedule_fk;
+
+ALTER TABLE IF EXISTS public.schedules DROP CONSTRAINT IF EXISTS sub_subject_schedule_fk;
+
+ALTER TABLE IF EXISTS public.sub_modules DROP CONSTRAINT IF EXISTS module_sub_module_fk;
+
+ALTER TABLE IF EXISTS public.sub_subjects DROP CONSTRAINT IF EXISTS subject_sub_subject_fk;
+
+ALTER TABLE IF EXISTS public.subjects DROP CONSTRAINT IF EXISTS sub_module_subject_fk;
 
 ALTER TABLE IF EXISTS public.user_details DROP CONSTRAINT IF EXISTS class_user_user_detail_fk;
 
 ALTER TABLE IF EXISTS public.user_details DROP CONSTRAINT IF EXISTS user_user_detail_fk;
 
-ALTER TABLE IF EXISTS public.addresses DROP CONSTRAINT IF EXISTS user_detail_address_fk;
-
-ALTER TABLE IF EXISTS public.sub_modules DROP CONSTRAINT IF EXISTS module_sub_module_fk;
-
-ALTER TABLE IF EXISTS public.subjects DROP CONSTRAINT IF EXISTS sub_module_subject_fk;
-
 ALTER TABLE IF EXISTS public.user_testimonials DROP CONSTRAINT IF EXISTS testimonial_user_testimonial_fk;
 
 ALTER TABLE IF EXISTS public.user_testimonials DROP CONSTRAINT IF EXISTS user_user_testimonial_fk;
 
-ALTER TABLE IF EXISTS public.sub_subjects DROP CONSTRAINT IF EXISTS subject_sub_subject_fk;
-
-ALTER TABLE IF EXISTS public.plans DROP CONSTRAINT IF EXISTS module_sub_plan_fk;
-
-ALTER TABLE IF EXISTS public.class_user_plans DROP CONSTRAINT IF EXISTS user_class_user_plan_fk;
-
-ALTER TABLE IF EXISTS public.class_user_plans DROP CONSTRAINT IF EXISTS plan_class_user_plan_fk;
-
-ALTER TABLE IF EXISTS quiz.quizzes DROP CONSTRAINT IF EXISTS sub_subject_quiz_fk;
-
-ALTER TABLE IF EXISTS quiz.quizzes DROP CONSTRAINT IF EXISTS test_type_quiz_fk;
-
-ALTER TABLE IF EXISTS public.schedules DROP CONSTRAINT IF EXISTS sub_subject_schedule_fk;
-
-ALTER TABLE IF EXISTS public.schedules DROP CONSTRAINT IF EXISTS class_user_plan_schedule_fk;
-
-ALTER TABLE IF EXISTS quiz.questions DROP CONSTRAINT IF EXISTS quiz_question_fk;
-
-ALTER TABLE IF EXISTS quiz.choices DROP CONSTRAINT IF EXISTS question_choice_fk;
-
-ALTER TABLE IF EXISTS quiz.submissions DROP CONSTRAINT IF EXISTS quiz_submission_fk;
-
-ALTER TABLE IF EXISTS quiz.submissions DROP CONSTRAINT IF EXISTS user_submission_fk;
+ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS role_user_fk;
 
 ALTER TABLE IF EXISTS quiz.answers DROP CONSTRAINT IF EXISTS choice_answer_fk;
 
 ALTER TABLE IF EXISTS quiz.answers DROP CONSTRAINT IF EXISTS submission_answer_fk;
 
-ALTER TABLE IF EXISTS exercise.exercises DROP CONSTRAINT IF EXISTS test_type_exercise_fk;
+ALTER TABLE IF EXISTS quiz.choices DROP CONSTRAINT IF EXISTS question_choice_fk;
+
+ALTER TABLE IF EXISTS quiz.questions DROP CONSTRAINT IF EXISTS quiz_question_fk;
+
+ALTER TABLE IF EXISTS quiz.quizzes DROP CONSTRAINT IF EXISTS sub_subject_quiz_fk;
+
+ALTER TABLE IF EXISTS quiz.quizzes DROP CONSTRAINT IF EXISTS test_type_quiz_fk;
 
 ALTER TABLE IF EXISTS quiz.scores DROP CONSTRAINT IF EXISTS submission_score_fk;
 
-ALTER TABLE IF EXISTS exercise.questions DROP CONSTRAINT IF EXISTS exercise_question_fk;
+ALTER TABLE IF EXISTS quiz.submissions DROP CONSTRAINT IF EXISTS quiz_submission_fk;
 
-ALTER TABLE IF EXISTS exercise.choices DROP CONSTRAINT IF EXISTS question_choice_fk;
-
-ALTER TABLE IF EXISTS exercise.submissions DROP CONSTRAINT IF EXISTS user_submission_fk;
-
-ALTER TABLE IF EXISTS exercise.submissions DROP CONSTRAINT IF EXISTS exercise_submission_fk;
-
-ALTER TABLE IF EXISTS exercise.answers DROP CONSTRAINT IF EXISTS choice_answer_fk;
-
-ALTER TABLE IF EXISTS exercise.answers DROP CONSTRAINT IF EXISTS submission_answer_fk;
-
-ALTER TABLE IF EXISTS exercise.scores DROP CONSTRAINT IF EXISTS submission_score_fk;
+ALTER TABLE IF EXISTS quiz.submissions DROP CONSTRAINT IF EXISTS user_submission_fk;
 
 
 
-DROP TABLE IF EXISTS public.roles;
+DROP TABLE IF EXISTS exercise.answers;
 
-CREATE TABLE IF NOT EXISTS public.roles
+CREATE TABLE IF NOT EXISTS exercise.answers
 (
     id text COLLATE pg_catalog."default" NOT NULL,
-    name character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    submission_id text COLLATE pg_catalog."default" NOT NULL,
+    choice_id text COLLATE pg_catalog."default",
+    is_marked boolean NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT roles_pkey PRIMARY KEY (id),
-    CONSTRAINT role_uq UNIQUE (name)
-        INCLUDE(name)
+    CONSTRAINT answer_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.users;
+DROP TABLE IF EXISTS exercise.choices;
 
-CREATE TABLE IF NOT EXISTS public.users
+CREATE TABLE IF NOT EXISTS exercise.choices
 (
     id text COLLATE pg_catalog."default" NOT NULL,
-    role_id text COLLATE pg_catalog."default" NOT NULL,
-    google_id text COLLATE pg_catalog."default",
-    facebook_id text COLLATE pg_catalog."default",
-    email character varying(64) COLLATE pg_catalog."default" NOT NULL,
-    password text COLLATE pg_catalog."default" NOT NULL,
+    question_id text COLLATE pg_catalog."default" NOT NULL,
+    content text COLLATE pg_catalog."default" NOT NULL,
+    point text COLLATE pg_catalog."default" NOT NULL,
+    is_correct boolean NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT users_pkey PRIMARY KEY (id),
-    CONSTRAINT users_email_key UNIQUE (email)
+    CONSTRAINT choice_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.user_details;
+DROP TABLE IF EXISTS exercise.exercises;
 
-CREATE TABLE IF NOT EXISTS public.user_details
+CREATE TABLE IF NOT EXISTS exercise.exercises
 (
     id text COLLATE pg_catalog."default" NOT NULL,
-    class_user_id text COLLATE pg_catalog."default" NOT NULL,
+    test_type_id text COLLATE pg_catalog."default" NOT NULL,
+    title character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
+    "time" integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT exercise_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS exercise.questions;
+
+CREATE TABLE IF NOT EXISTS exercise.questions
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    exercise_id text COLLATE pg_catalog."default" NOT NULL,
+    content text COLLATE pg_catalog."default" NOT NULL,
+    image text COLLATE pg_catalog."default",
+    point integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT question_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS exercise.scores;
+
+CREATE TABLE IF NOT EXISTS exercise.scores
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    submission_id text COLLATE pg_catalog."default" NOT NULL,
+    score integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT score_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS exercise.submissions;
+
+CREATE TABLE IF NOT EXISTS exercise.submissions
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
     user_id text COLLATE pg_catalog."default" NOT NULL,
-    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    phone_number character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    profile_picture text COLLATE pg_catalog."default" NOT NULL DEFAULT 'assets/img/users/profile/account.png'::text,
+    exercise_id text COLLATE pg_catalog."default" NOT NULL,
+    started_at timestamp with time zone NOT NULL,
+    finished_at timestamp with time zone NOT NULL,
+    time_required time without time zone NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT user_details_pkey PRIMARY KEY (id),
-    CONSTRAINT user_details_uq UNIQUE (phone_number, profile_picture)
-);
-
-DROP TABLE IF EXISTS public.class_user;
-
-CREATE TABLE IF NOT EXISTS public.class_user
-(
-    id text NOT NULL,
-    name character varying(100) NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (id)
+    CONSTRAINT submission_pkey PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS public.addresses;
@@ -142,6 +170,33 @@ CREATE TABLE IF NOT EXISTS public.addresses
     CONSTRAINT addresses_pkey PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS public.class_user;
+
+CREATE TABLE IF NOT EXISTS public.class_user
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT class_user_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public.class_user_plans;
+
+CREATE TABLE IF NOT EXISTS public.class_user_plans
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    user_id text COLLATE pg_catalog."default" NOT NULL,
+    plan_id text COLLATE pg_catalog."default" NOT NULL,
+    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT class_user_plan_pkey PRIMARY KEY (id),
+    CONSTRAINT class_user_plan_uq UNIQUE (name)
+);
+
 DROP TABLE IF EXISTS public.modules;
 
 CREATE TABLE IF NOT EXISTS public.modules
@@ -154,78 +209,6 @@ CREATE TABLE IF NOT EXISTS public.modules
     CONSTRAINT modules_pkey PRIMARY KEY (id),
     CONSTRAINT module_uq UNIQUE (name)
         INCLUDE(name)
-);
-
-DROP TABLE IF EXISTS public.sub_modules;
-
-CREATE TABLE IF NOT EXISTS public.sub_modules
-(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    module_id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
-    description text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT sub_modules_pkey PRIMARY KEY (id),
-    CONSTRAINT sub_module_uq UNIQUE (name)
-        INCLUDE(name)
-);
-
-DROP TABLE IF EXISTS public.subjects;
-
-CREATE TABLE IF NOT EXISTS public.subjects
-(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    sub_module_id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT subjects_pkey PRIMARY KEY (id),
-    CONSTRAINT subject_uq UNIQUE (name)
-        INCLUDE(name)
-);
-
-DROP TABLE IF EXISTS public.user_testimonials;
-
-CREATE TABLE IF NOT EXISTS public.user_testimonials
-(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    user_id text COLLATE pg_catalog."default" NOT NULL,
-    testimonial_id text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT user_testimonials_pkey PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS public.testimonials;
-
-CREATE TABLE IF NOT EXISTS public.testimonials
-(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    comment text COLLATE pg_catalog."default" NOT NULL,
-    rating numeric NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT testimonials_pkey PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS public.sub_subjects;
-
-CREATE TABLE IF NOT EXISTS public.sub_subjects
-(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    subject_id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
-    content text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT sub_subjects_pkey PRIMARY KEY (id),
-    CONSTRAINT sub_subject_uq UNIQUE (name, content)
 );
 
 DROP TABLE IF EXISTS public.plans;
@@ -248,31 +231,207 @@ CREATE TABLE IF NOT EXISTS public.plans
     CONSTRAINT sub_plans_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.class_user_plans;
+DROP TABLE IF EXISTS public.roles;
 
-CREATE TABLE IF NOT EXISTS public.class_user_plans
+CREATE TABLE IF NOT EXISTS public.roles
 (
-    id text NOT NULL,
-    user_id text NOT NULL,
-    plan_id text NOT NULL,
-    name character varying(50) NOT NULL,
+    id text COLLATE pg_catalog."default" NOT NULL,
+    name character varying(20) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT class_user_plan_pkey PRIMARY KEY (id),
-    CONSTRAINT class_user_plan_uq UNIQUE (name)
+    CONSTRAINT roles_pkey PRIMARY KEY (id),
+    CONSTRAINT role_uq UNIQUE (name)
+        INCLUDE(name)
+);
+
+DROP TABLE IF EXISTS public.schedules;
+
+CREATE TABLE IF NOT EXISTS public.schedules
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    sub_subject_id text COLLATE pg_catalog."default" NOT NULL,
+    class_user_plan_id text COLLATE pg_catalog."default" NOT NULL,
+    meeting_date timestamp with time zone NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT schedule_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public.sub_modules;
+
+CREATE TABLE IF NOT EXISTS public.sub_modules
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    module_id text COLLATE pg_catalog."default" NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT sub_modules_pkey PRIMARY KEY (id),
+    CONSTRAINT sub_module_uq UNIQUE (name)
+        INCLUDE(name)
+);
+
+DROP TABLE IF EXISTS public.sub_subjects;
+
+CREATE TABLE IF NOT EXISTS public.sub_subjects
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    subject_id text COLLATE pg_catalog."default" NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    content text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT sub_subjects_pkey PRIMARY KEY (id),
+    CONSTRAINT sub_subject_uq UNIQUE (name, content)
+);
+
+DROP TABLE IF EXISTS public.subjects;
+
+CREATE TABLE IF NOT EXISTS public.subjects
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    sub_module_id text COLLATE pg_catalog."default" NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT subjects_pkey PRIMARY KEY (id),
+    CONSTRAINT subject_uq UNIQUE (name)
+        INCLUDE(name)
+);
+
+DROP TABLE IF EXISTS public.test_types;
+
+CREATE TABLE IF NOT EXISTS public.test_types
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    name text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT test_type_pkey PRIMARY KEY (id),
+    CONSTRAINT test_type_uq UNIQUE (name)
+);
+
+DROP TABLE IF EXISTS public.testimonials;
+
+CREATE TABLE IF NOT EXISTS public.testimonials
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    comment text COLLATE pg_catalog."default" NOT NULL,
+    rating numeric NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT testimonials_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public.user_details;
+
+CREATE TABLE IF NOT EXISTS public.user_details
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    class_user_id text COLLATE pg_catalog."default" NOT NULL,
+    user_id text COLLATE pg_catalog."default" NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    phone_number character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    profile_picture text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_details_pkey PRIMARY KEY (id),
+    CONSTRAINT user_details_uq UNIQUE (phone_number, profile_picture)
+);
+
+DROP TABLE IF EXISTS public.user_testimonials;
+
+CREATE TABLE IF NOT EXISTS public.user_testimonials
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    user_id text COLLATE pg_catalog."default" NOT NULL,
+    testimonial_id text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT user_testimonials_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS public.users;
+
+CREATE TABLE IF NOT EXISTS public.users
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    role_id text COLLATE pg_catalog."default" NOT NULL,
+    google_id text COLLATE pg_catalog."default",
+    facebook_id text COLLATE pg_catalog."default",
+    email character varying(64) COLLATE pg_catalog."default" NOT NULL,
+    password text COLLATE pg_catalog."default" NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT users_pkey PRIMARY KEY (id),
+    CONSTRAINT users_email_key UNIQUE (email)
+);
+
+DROP TABLE IF EXISTS quiz.answers;
+
+CREATE TABLE IF NOT EXISTS quiz.answers
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    submission_id text COLLATE pg_catalog."default" NOT NULL,
+    choice_id text COLLATE pg_catalog."default",
+    is_marked boolean NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT answer_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS quiz.choices;
+
+CREATE TABLE IF NOT EXISTS quiz.choices
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    question_id text COLLATE pg_catalog."default" NOT NULL,
+    content text COLLATE pg_catalog."default" NOT NULL,
+    point integer NOT NULL,
+    is_correct boolean NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT choices_pkey PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS quiz.questions;
+
+CREATE TABLE IF NOT EXISTS quiz.questions
+(
+    id text COLLATE pg_catalog."default" NOT NULL,
+    quiz_id text COLLATE pg_catalog."default" NOT NULL,
+    content text COLLATE pg_catalog."default" NOT NULL,
+    image text COLLATE pg_catalog."default",
+    point integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT question_pkey PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS quiz.quizzes;
 
 CREATE TABLE IF NOT EXISTS quiz.quizzes
 (
-    id text NOT NULL,
-    sub_subject_id text NOT NULL,
-    test_type_id text NOT NULL,
+    id text COLLATE pg_catalog."default" NOT NULL,
+    sub_subject_id text COLLATE pg_catalog."default" NOT NULL,
+    test_type_id text COLLATE pg_catalog."default" NOT NULL,
     open timestamp with time zone NOT NULL,
-    title character varying(50) NOT NULL,
-    description text NOT NULL,
+    title character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    description text COLLATE pg_catalog."default" NOT NULL,
     "time" integer NOT NULL,
     point integer NOT NULL,
     attempt integer NOT NULL,
@@ -283,70 +442,26 @@ CREATE TABLE IF NOT EXISTS quiz.quizzes
     CONSTRAINT quiz_uq UNIQUE (title)
 );
 
-DROP TABLE IF EXISTS public.schedules;
+DROP TABLE IF EXISTS quiz.scores;
 
-CREATE TABLE IF NOT EXISTS public.schedules
+CREATE TABLE IF NOT EXISTS quiz.scores
 (
-    id text NOT NULL,
-    sub_subject_id text NOT NULL,
-    class_user_plan_id text NOT NULL,
-    meeting_date timestamp with time zone NOT NULL,
+    id text COLLATE pg_catalog."default" NOT NULL,
+    submission_id text COLLATE pg_catalog."default" NOT NULL,
+    score integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT schedule_pkey PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS quiz.questions;
-
-CREATE TABLE IF NOT EXISTS quiz.questions
-(
-    id text NOT NULL,
-    quiz_id text NOT NULL,
-    content text NOT NULL,
-    image text,
-    point integer NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT question_pkey PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS public.test_types;
-
-CREATE TABLE IF NOT EXISTS public.test_types
-(
-    id text NOT NULL,
-    name text NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT test_type_pkey PRIMARY KEY (id),
-    CONSTRAINT test_type_uq UNIQUE (name)
-);
-
-DROP TABLE IF EXISTS quiz.choices;
-
-CREATE TABLE IF NOT EXISTS quiz.choices
-(
-    id text NOT NULL,
-    question_id text NOT NULL,
-    content text NOT NULL,
-    point integer NOT NULL,
-    is_correct boolean NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT choices_pkey PRIMARY KEY (id)
+    CONSTRAINT score_pket PRIMARY KEY (id)
 );
 
 DROP TABLE IF EXISTS quiz.submissions;
 
 CREATE TABLE IF NOT EXISTS quiz.submissions
 (
-    id text NOT NULL,
-    user_id text NOT NULL,
-    quiz_id text NOT NULL,
+    id text COLLATE pg_catalog."default" NOT NULL,
+    user_id text COLLATE pg_catalog."default" NOT NULL,
+    quiz_id text COLLATE pg_catalog."default" NOT NULL,
     started_at timestamp with time zone NOT NULL,
     finished_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     time_required time without time zone NOT NULL,
@@ -356,124 +471,137 @@ CREATE TABLE IF NOT EXISTS quiz.submissions
     CONSTRAINT submission_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS quiz.answers;
+ALTER TABLE IF EXISTS exercise.answers
+    ADD CONSTRAINT choice_answer_fk FOREIGN KEY (choice_id)
+    REFERENCES exercise.choices (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS quiz.answers
-(
-    id text NOT NULL,
-    submission_id text NOT NULL,
-    choice_id text,
-    is_marked boolean NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT answer_pkey PRIMARY KEY (id)
-);
 
-DROP TABLE IF EXISTS exercise.exercises;
+ALTER TABLE IF EXISTS exercise.answers
+    ADD CONSTRAINT submission_answer_fk FOREIGN KEY (submission_id)
+    REFERENCES exercise.submissions (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS exercise.exercises
-(
-    id text NOT NULL,
-    test_type_id text NOT NULL,
-    title character varying(50) NOT NULL,
-    description text NOT NULL,
-    "time" integer NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT exercise_pkey PRIMARY KEY (id)
-);
 
-DROP TABLE IF EXISTS quiz.scores;
+ALTER TABLE IF EXISTS exercise.choices
+    ADD CONSTRAINT question_choice_fk FOREIGN KEY (question_id)
+    REFERENCES exercise.questions (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS quiz.scores
-(
-    id text NOT NULL,
-    submission_id text NOT NULL,
-    score integer NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT score_pket PRIMARY KEY (id)
-);
 
-DROP TABLE IF EXISTS exercise.questions;
+ALTER TABLE IF EXISTS exercise.exercises
+    ADD CONSTRAINT test_type_exercise_fk FOREIGN KEY (test_type_id)
+    REFERENCES public.test_types (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS exercise.questions
-(
-    id text NOT NULL,
-    exercise_id text NOT NULL,
-    content text NOT NULL,
-    image text,
-    point integer NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT question_pkey PRIMARY KEY (id)
-);
 
-DROP TABLE IF EXISTS exercise.choices;
+ALTER TABLE IF EXISTS exercise.questions
+    ADD CONSTRAINT exercise_question_fk FOREIGN KEY (exercise_id)
+    REFERENCES exercise.exercises (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS exercise.choices
-(
-    id text NOT NULL,
-    question_id text NOT NULL,
-    content text NOT NULL,
-    point text NOT NULL,
-    is_correct boolean NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT choice_pkey PRIMARY KEY (id)
-);
 
-DROP TABLE IF EXISTS exercise.submissions;
+ALTER TABLE IF EXISTS exercise.scores
+    ADD CONSTRAINT submission_score_fk FOREIGN KEY (submission_id)
+    REFERENCES exercise.submissions (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS exercise.submissions
-(
-    id text NOT NULL,
-    user_id text NOT NULL,
-    exercise_id text NOT NULL,
-    started_at timestamp with time zone NOT NULL,
-    finished_at timestamp with time zone NOT NULL,
-    time_required time without time zone NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT submission_pkey PRIMARY KEY (id)
-);
 
-DROP TABLE IF EXISTS exercise.answers;
+ALTER TABLE IF EXISTS exercise.submissions
+    ADD CONSTRAINT exercise_submission_fk FOREIGN KEY (exercise_id)
+    REFERENCES exercise.exercises (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS exercise.answers
-(
-    id text NOT NULL,
-    submission_id text NOT NULL,
-    choice_id text,
-    is_marked boolean NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT answer_pkey PRIMARY KEY (id)
-);
 
-DROP TABLE IF EXISTS exercise.scores;
+ALTER TABLE IF EXISTS exercise.submissions
+    ADD CONSTRAINT user_submission_fk FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
 
-CREATE TABLE IF NOT EXISTS exercise.scores
-(
-    id text NOT NULL,
-    submission_id text NOT NULL,
-    score integer NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT score_pkey PRIMARY KEY (id)
-);
 
-ALTER TABLE IF EXISTS public.users
-    ADD CONSTRAINT role_user_fk FOREIGN KEY (role_id)
-    REFERENCES public.roles (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS public.addresses
+    ADD CONSTRAINT user_detail_address_fk FOREIGN KEY (user_detail_id)
+    REFERENCES public.user_details (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.class_user_plans
+    ADD CONSTRAINT plan_class_user_plan_fk FOREIGN KEY (plan_id)
+    REFERENCES public.plans (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.class_user_plans
+    ADD CONSTRAINT user_class_user_plan_fk FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.plans
+    ADD CONSTRAINT module_sub_plan_fk FOREIGN KEY (module_id)
+    REFERENCES public.modules (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.schedules
+    ADD CONSTRAINT class_user_plan_schedule_fk FOREIGN KEY (class_user_plan_id)
+    REFERENCES public.class_user_plans (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.schedules
+    ADD CONSTRAINT sub_subject_schedule_fk FOREIGN KEY (sub_subject_id)
+    REFERENCES public.sub_subjects (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.sub_modules
+    ADD CONSTRAINT module_sub_module_fk FOREIGN KEY (module_id)
+    REFERENCES public.modules (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.sub_subjects
+    ADD CONSTRAINT subject_sub_subject_fk FOREIGN KEY (subject_id)
+    REFERENCES public.subjects (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.subjects
+    ADD CONSTRAINT sub_module_subject_fk FOREIGN KEY (sub_module_id)
+    REFERENCES public.sub_modules (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -495,30 +623,6 @@ ALTER TABLE IF EXISTS public.user_details
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.addresses
-    ADD CONSTRAINT user_detail_address_fk FOREIGN KEY (user_detail_id)
-    REFERENCES public.user_details (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.sub_modules
-    ADD CONSTRAINT module_sub_module_fk FOREIGN KEY (module_id)
-    REFERENCES public.modules (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.subjects
-    ADD CONSTRAINT sub_module_subject_fk FOREIGN KEY (sub_module_id)
-    REFERENCES public.sub_modules (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
 ALTER TABLE IF EXISTS public.user_testimonials
     ADD CONSTRAINT testimonial_user_testimonial_fk FOREIGN KEY (testimonial_id)
     REFERENCES public.testimonials (id) MATCH SIMPLE
@@ -535,97 +639,9 @@ ALTER TABLE IF EXISTS public.user_testimonials
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.sub_subjects
-    ADD CONSTRAINT subject_sub_subject_fk FOREIGN KEY (subject_id)
-    REFERENCES public.subjects (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.plans
-    ADD CONSTRAINT module_sub_plan_fk FOREIGN KEY (module_id)
-    REFERENCES public.modules (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.class_user_plans
-    ADD CONSTRAINT user_class_user_plan_fk FOREIGN KEY (user_id)
-    REFERENCES public.users (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.class_user_plans
-    ADD CONSTRAINT plan_class_user_plan_fk FOREIGN KEY (plan_id)
-    REFERENCES public.plans (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS quiz.quizzes
-    ADD CONSTRAINT sub_subject_quiz_fk FOREIGN KEY (sub_subject_id)
-    REFERENCES public.sub_subjects (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS quiz.quizzes
-    ADD CONSTRAINT test_type_quiz_fk FOREIGN KEY (test_type_id)
-    REFERENCES public.test_types (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.schedules
-    ADD CONSTRAINT sub_subject_schedule_fk FOREIGN KEY (sub_subject_id)
-    REFERENCES public.sub_subjects (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.schedules
-    ADD CONSTRAINT class_user_plan_schedule_fk FOREIGN KEY (class_user_plan_id)
-    REFERENCES public.class_user_plans (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS quiz.questions
-    ADD CONSTRAINT quiz_question_fk FOREIGN KEY (quiz_id)
-    REFERENCES quiz.quizzes (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS quiz.choices
-    ADD CONSTRAINT question_choice_fk FOREIGN KEY (question_id)
-    REFERENCES quiz.questions (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS quiz.submissions
-    ADD CONSTRAINT quiz_submission_fk FOREIGN KEY (quiz_id)
-    REFERENCES quiz.quizzes (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS quiz.submissions
-    ADD CONSTRAINT user_submission_fk FOREIGN KEY (user_id)
-    REFERENCES public.users (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS public.users
+    ADD CONSTRAINT role_user_fk FOREIGN KEY (role_id)
+    REFERENCES public.roles (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -647,8 +663,32 @@ ALTER TABLE IF EXISTS quiz.answers
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS exercise.exercises
-    ADD CONSTRAINT test_type_exercise_fk FOREIGN KEY (test_type_id)
+ALTER TABLE IF EXISTS quiz.choices
+    ADD CONSTRAINT question_choice_fk FOREIGN KEY (question_id)
+    REFERENCES quiz.questions (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS quiz.questions
+    ADD CONSTRAINT quiz_question_fk FOREIGN KEY (quiz_id)
+    REFERENCES quiz.quizzes (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS quiz.quizzes
+    ADD CONSTRAINT sub_subject_quiz_fk FOREIGN KEY (sub_subject_id)
+    REFERENCES public.sub_subjects (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS quiz.quizzes
+    ADD CONSTRAINT test_type_quiz_fk FOREIGN KEY (test_type_id)
     REFERENCES public.test_types (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
@@ -663,57 +703,17 @@ ALTER TABLE IF EXISTS quiz.scores
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS exercise.questions
-    ADD CONSTRAINT exercise_question_fk FOREIGN KEY (exercise_id)
-    REFERENCES exercise.exercises (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS quiz.submissions
+    ADD CONSTRAINT quiz_submission_fk FOREIGN KEY (quiz_id)
+    REFERENCES quiz.quizzes (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS exercise.choices
-    ADD CONSTRAINT question_choice_fk FOREIGN KEY (question_id)
-    REFERENCES exercise.questions (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS exercise.submissions
+ALTER TABLE IF EXISTS quiz.submissions
     ADD CONSTRAINT user_submission_fk FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS exercise.submissions
-    ADD CONSTRAINT exercise_submission_fk FOREIGN KEY (exercise_id)
-    REFERENCES exercise.exercises (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS exercise.answers
-    ADD CONSTRAINT choice_answer_fk FOREIGN KEY (choice_id)
-    REFERENCES exercise.choices (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS exercise.answers
-    ADD CONSTRAINT submission_answer_fk FOREIGN KEY (submission_id)
-    REFERENCES exercise.submissions (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS exercise.scores
-    ADD CONSTRAINT submission_score_fk FOREIGN KEY (submission_id)
-    REFERENCES exercise.submissions (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
