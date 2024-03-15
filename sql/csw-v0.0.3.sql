@@ -69,6 +69,10 @@ ALTER TABLE IF EXISTS public.user_testimonials DROP CONSTRAINT IF EXISTS user_us
 
 ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS role_user_fk;
 
+ALTER TABLE IF EXISTS public.user_mentor_testimonials DROP CONSTRAINT IF EXISTS user_user_mentor_testimonial_fk;
+
+ALTER TABLE IF EXISTS public.user_mentor_testimonials DROP CONSTRAINT IF EXISTS mentor_user_mentor_testimonial_fk;
+
 
 
 DROP TABLE IF EXISTS public.addresses;
@@ -516,6 +520,21 @@ CREATE TABLE IF NOT EXISTS public.users
     CONSTRAINT users_email_key UNIQUE (email)
 );
 
+DROP TABLE IF EXISTS public.user_mentor_testimonials;
+
+CREATE TABLE IF NOT EXISTS public.user_mentor_testimonials
+(
+    id text NOT NULL,
+    user_id text NOT NULL,
+    mentor_id text NOT NULL,
+    comment text NOT NULL,
+    rating numeric NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT user_mentor_testimonial_pkey PRIMARY KEY (id)
+);
+
 ALTER TABLE IF EXISTS public.addresses
     ADD CONSTRAINT user_detail_address_fk FOREIGN KEY (user_detail_id)
     REFERENCES public.user_details (id) MATCH SIMPLE
@@ -775,6 +794,22 @@ ALTER TABLE IF EXISTS public.user_testimonials
 ALTER TABLE IF EXISTS public.users
     ADD CONSTRAINT role_user_fk FOREIGN KEY (role_id)
     REFERENCES public.roles (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.user_mentor_testimonials
+    ADD CONSTRAINT user_user_mentor_testimonial_fk FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.user_mentor_testimonials
+    ADD CONSTRAINT mentor_user_mentor_testimonial_fk FOREIGN KEY (mentor_id)
+    REFERENCES public.mentors (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
