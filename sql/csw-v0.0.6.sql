@@ -3,170 +3,79 @@
 BEGIN;
 
 
-ALTER TABLE IF EXISTS public.addresses DROP CONSTRAINT IF EXISTS user_detail_address_fk;
-
-ALTER TABLE IF EXISTS public.class_user_plans DROP CONSTRAINT IF EXISTS plan_class_user_plan_fk;
-
-ALTER TABLE IF EXISTS public.class_user_plans DROP CONSTRAINT IF EXISTS user_class_user_plan_fk;
-
-ALTER TABLE IF EXISTS public.exercise_answers DROP CONSTRAINT IF EXISTS choice_exercise_answer_fk;
-
-ALTER TABLE IF EXISTS public.exercise_answers DROP CONSTRAINT IF EXISTS submission_exercise_answer_fk;
-
-ALTER TABLE IF EXISTS public.exercise_choices DROP CONSTRAINT IF EXISTS question_exercise_choice_fk;
-
-ALTER TABLE IF EXISTS public.exercise_questions DROP CONSTRAINT IF EXISTS exercise_exercise_question_fk;
-
-ALTER TABLE IF EXISTS public.exercise_scores DROP CONSTRAINT IF EXISTS submission_exercise_score_fk;
-
-ALTER TABLE IF EXISTS public.exercise_submissions DROP CONSTRAINT IF EXISTS exercise_exercise_submission_fk;
-
-ALTER TABLE IF EXISTS public.exercise_submissions DROP CONSTRAINT IF EXISTS user_exercise_submission_fk;
-
-ALTER TABLE IF EXISTS public.exercises DROP CONSTRAINT IF EXISTS test_type_exercise_fk;
-
-ALTER TABLE IF EXISTS public.mentors DROP CONSTRAINT IF EXISTS user_mentor_fk;
-
-ALTER TABLE IF EXISTS public.plans DROP CONSTRAINT IF EXISTS module_sub_plan_fk;
-
-ALTER TABLE IF EXISTS public.quiz_answers DROP CONSTRAINT IF EXISTS choice_quiz_answer_fk;
-
-ALTER TABLE IF EXISTS public.quiz_answers DROP CONSTRAINT IF EXISTS submission_quiz_answer_fk;
-
-ALTER TABLE IF EXISTS public.quiz_choices DROP CONSTRAINT IF EXISTS question_quiz_choice_fk;
-
-ALTER TABLE IF EXISTS public.quiz_questions DROP CONSTRAINT IF EXISTS quiz_quiz_question_fk;
-
-ALTER TABLE IF EXISTS public.quiz_scores DROP CONSTRAINT IF EXISTS submission_quiz_score_fk;
-
-ALTER TABLE IF EXISTS public.quiz_submissions DROP CONSTRAINT IF EXISTS quiz_quiz_submission_fk;
-
-ALTER TABLE IF EXISTS public.quiz_submissions DROP CONSTRAINT IF EXISTS user_quiz_submission_fk;
-
-ALTER TABLE IF EXISTS public.quizzes DROP CONSTRAINT IF EXISTS sub_subject_quiz_fk;
-
-ALTER TABLE IF EXISTS public.quizzes DROP CONSTRAINT IF EXISTS test_type_quiz_fk;
-
-ALTER TABLE IF EXISTS public.schedules DROP CONSTRAINT IF EXISTS class_user_plan_schedule_fk;
-
-ALTER TABLE IF EXISTS public.schedules DROP CONSTRAINT IF EXISTS sub_subject_schedule_fk;
-
-ALTER TABLE IF EXISTS public.sub_modules DROP CONSTRAINT IF EXISTS module_sub_module_fk;
-
-ALTER TABLE IF EXISTS public.sub_subjects DROP CONSTRAINT IF EXISTS subject_sub_subject_fk;
-
-ALTER TABLE IF EXISTS public.subjects DROP CONSTRAINT IF EXISTS sub_module_subject_fk;
-
-ALTER TABLE IF EXISTS public.uniques DROP CONSTRAINT IF EXISTS mentor_unique_fk;
-
-ALTER TABLE IF EXISTS public.user_details DROP CONSTRAINT IF EXISTS class_user_user_detail_fk;
-
-ALTER TABLE IF EXISTS public.user_details DROP CONSTRAINT IF EXISTS user_user_detail_fk;
-
-ALTER TABLE IF EXISTS public.user_testimonials DROP CONSTRAINT IF EXISTS testimonial_user_testimonial_fk;
-
-ALTER TABLE IF EXISTS public.user_testimonials DROP CONSTRAINT IF EXISTS user_user_testimonial_fk;
-
-ALTER TABLE IF EXISTS public.users DROP CONSTRAINT IF EXISTS role_user_fk;
-
-ALTER TABLE IF EXISTS public.user_mentor_testimonials DROP CONSTRAINT IF EXISTS user_user_mentor_testimonial_fk;
-
-ALTER TABLE IF EXISTS public.user_mentor_testimonials DROP CONSTRAINT IF EXISTS mentor_user_mentor_testimonial_fk;
-
-
-
-DROP TABLE IF EXISTS public.addresses;
-
-CREATE TABLE IF NOT EXISTS public.addresses
-(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    user_detail_id text COLLATE pg_catalog."default" NOT NULL,
-    province text COLLATE pg_catalog."default" NOT NULL,
-    regency_city text COLLATE pg_catalog."default" NOT NULL,
-    sub_district text COLLATE pg_catalog."default" NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
-    CONSTRAINT addresses_pkey PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS public.class_user_plans;
-
 CREATE TABLE IF NOT EXISTS public.class_user_plans
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    user_id text COLLATE pg_catalog."default" NOT NULL,
-    plan_id text COLLATE pg_catalog."default" NOT NULL,
-    name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id integer NOT NULL,
+    plan_id integer NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT class_user_plan_pkey PRIMARY KEY (id),
+    CONSTRAINT class_user_plans_pkey PRIMARY KEY (id),
     CONSTRAINT class_user_plan_uq UNIQUE (name)
 );
 
-DROP TABLE IF EXISTS public.class_users;
-
 CREATE TABLE IF NOT EXISTS public.class_users
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
     name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT class_user_pkey PRIMARY KEY (id)
+    CONSTRAINT class_users_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.exercise_answers;
 
 CREATE TABLE IF NOT EXISTS public.exercise_answers
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    submission_id text COLLATE pg_catalog."default" NOT NULL,
-    choice_id text COLLATE pg_catalog."default",
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    submission_id integer NOT NULL,
+    choice_id integer,
     is_marked boolean NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT exercise_answer_pkey PRIMARY KEY (id)
+    CONSTRAINT exercise_answers_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.exercise_choices;
 
 CREATE TABLE IF NOT EXISTS public.exercise_choices
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    question_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    question_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
     point text COLLATE pg_catalog."default" NOT NULL,
     is_correct boolean NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT exercise_choice_pkey PRIMARY KEY (id)
+    CONSTRAINT exercise_choices_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.exercise_questions;
 
 CREATE TABLE IF NOT EXISTS public.exercise_questions
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    exercise_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    exercise_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
     image text COLLATE pg_catalog."default",
     point integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT exercise_question_pkey PRIMARY KEY (id)
+    CONSTRAINT exercise_questions_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.exercise_scores;
 
 CREATE TABLE IF NOT EXISTS public.exercise_scores
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    submission_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    submission_id integer NOT NULL,
     score integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -174,13 +83,12 @@ CREATE TABLE IF NOT EXISTS public.exercise_scores
     CONSTRAINT exercise_scores_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.exercise_submissions;
-
 CREATE TABLE IF NOT EXISTS public.exercise_submissions
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    user_id text COLLATE pg_catalog."default" NOT NULL,
-    exercise_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id integer NOT NULL,
+    exercise_id integer NOT NULL,
     started_at timestamp with time zone NOT NULL,
     finished_at timestamp with time zone NOT NULL,
     time_required time without time zone NOT NULL,
@@ -190,43 +98,41 @@ CREATE TABLE IF NOT EXISTS public.exercise_submissions
     CONSTRAINT exercise_submissions_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.exercises;
-
 CREATE TABLE IF NOT EXISTS public.exercises
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    test_type_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    test_type_id integer NOT NULL,
     title character varying(50) COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" NOT NULL,
     "time" integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT exercise_pkey PRIMARY KEY (id)
+    CONSTRAINT exercises_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.mentors;
 
 CREATE TABLE IF NOT EXISTS public.mentors
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    user_id text COLLATE pg_catalog."default" NOT NULL,
-    short_name character varying(10) COLLATE pg_catalog."default" NOT NULL,
-    type character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id integer NOT NULL,
+    module_id integer NOT NULL,
+    short_name character varying(100) COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" NOT NULL,
     motto character varying(255) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT mentor_pkey PRIMARY KEY (id)
+    CONSTRAINT mentors_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.modules;
 
 CREATE TABLE IF NOT EXISTS public.modules
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
@@ -235,15 +141,15 @@ CREATE TABLE IF NOT EXISTS public.modules
         INCLUDE(name)
 );
 
-DROP TABLE IF EXISTS public.plans;
-
 CREATE TABLE IF NOT EXISTS public.plans
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    module_id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    module_id integer NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     price numeric NOT NULL,
-    grup_pejuang boolean NOT NULL,
+    "group" boolean NOT NULL,
     exercise bigint NOT NULL,
     access bigint NOT NULL,
     module boolean NOT NULL,
@@ -252,16 +158,15 @@ CREATE TABLE IF NOT EXISTS public.plans
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT sub_plans_pkey PRIMARY KEY (id)
+    CONSTRAINT plans_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.quiz_answers;
 
 CREATE TABLE IF NOT EXISTS public.quiz_answers
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    submission_id text COLLATE pg_catalog."default" NOT NULL,
-    choice_id text COLLATE pg_catalog."default",
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    submission_id integer NOT NULL,
+    choice_id integer,
     is_marked boolean NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -269,12 +174,11 @@ CREATE TABLE IF NOT EXISTS public.quiz_answers
     CONSTRAINT quiz_answers_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.quiz_choices;
-
 CREATE TABLE IF NOT EXISTS public.quiz_choices
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    question_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    question_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
     point integer NOT NULL,
     is_correct boolean NOT NULL,
@@ -284,12 +188,11 @@ CREATE TABLE IF NOT EXISTS public.quiz_choices
     CONSTRAINT quiz_choices_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.quiz_questions;
-
 CREATE TABLE IF NOT EXISTS public.quiz_questions
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    quiz_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    quiz_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
     image text COLLATE pg_catalog."default",
     point integer NOT NULL,
@@ -299,26 +202,24 @@ CREATE TABLE IF NOT EXISTS public.quiz_questions
     CONSTRAINT quiz_questions_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.quiz_scores;
-
 CREATE TABLE IF NOT EXISTS public.quiz_scores
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    submission_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    submission_id integer NOT NULL,
     score integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT quiz_scores_pket PRIMARY KEY (id)
+    CONSTRAINT quiz_scores_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.quiz_submissions;
 
 CREATE TABLE IF NOT EXISTS public.quiz_submissions
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    user_id text COLLATE pg_catalog."default" NOT NULL,
-    quiz_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id integer NOT NULL,
+    quiz_id integer NOT NULL,
     started_at timestamp with time zone NOT NULL,
     finished_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     time_required time without time zone NOT NULL,
@@ -328,13 +229,12 @@ CREATE TABLE IF NOT EXISTS public.quiz_submissions
     CONSTRAINT quiz_submissions_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.quizzes;
-
 CREATE TABLE IF NOT EXISTS public.quizzes
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    sub_subject_id text COLLATE pg_catalog."default" NOT NULL,
-    test_type_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    sub_subject_id integer NOT NULL,
+    test_type_id integer NOT NULL,
     open timestamp with time zone NOT NULL,
     title character varying(50) COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" NOT NULL,
@@ -344,16 +244,16 @@ CREATE TABLE IF NOT EXISTS public.quizzes
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT quiz_pkey PRIMARY KEY (id),
+    CONSTRAINT quizzes_pkey PRIMARY KEY (id),
     CONSTRAINT quiz_uq UNIQUE (title)
 );
 
-DROP TABLE IF EXISTS public.roles;
-
 CREATE TABLE IF NOT EXISTS public.roles
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    name character varying(20) COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
@@ -362,21 +262,18 @@ CREATE TABLE IF NOT EXISTS public.roles
         INCLUDE(name)
 );
 
-DROP TABLE IF EXISTS public.schedules;
-
 CREATE TABLE IF NOT EXISTS public.schedules
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    sub_subject_id text COLLATE pg_catalog."default" NOT NULL,
-    class_user_plan_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    sub_subject_id integer NOT NULL,
+    class_user_plan_id integer NOT NULL,
     meeting_date timestamp with time zone NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT schedule_pkey PRIMARY KEY (id)
+    CONSTRAINT schedules_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.schema_migrations;
 
 CREATE TABLE IF NOT EXISTS public.schema_migrations
 (
@@ -385,13 +282,13 @@ CREATE TABLE IF NOT EXISTS public.schema_migrations
     CONSTRAINT schema_migrations_pkey PRIMARY KEY (version)
 );
 
-DROP TABLE IF EXISTS public.sub_modules;
-
 CREATE TABLE IF NOT EXISTS public.sub_modules
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    module_id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    module_id integer NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -401,13 +298,13 @@ CREATE TABLE IF NOT EXISTS public.sub_modules
         INCLUDE(name)
 );
 
-DROP TABLE IF EXISTS public.sub_subjects;
-
 CREATE TABLE IF NOT EXISTS public.sub_subjects
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    subject_id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    subject_id integer NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -416,13 +313,13 @@ CREATE TABLE IF NOT EXISTS public.sub_subjects
     CONSTRAINT sub_subject_uq UNIQUE (name, content)
 );
 
-DROP TABLE IF EXISTS public.subjects;
-
 CREATE TABLE IF NOT EXISTS public.subjects
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    sub_module_id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    sub_module_id integer NOT NULL,
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
@@ -431,53 +328,38 @@ CREATE TABLE IF NOT EXISTS public.subjects
         INCLUDE(name)
 );
 
-DROP TABLE IF EXISTS public.test_types;
-
 CREATE TABLE IF NOT EXISTS public.test_types
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    name text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    slug character varying(50) COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT test_type_pkey PRIMARY KEY (id),
+    CONSTRAINT test_types_pkey PRIMARY KEY (id),
     CONSTRAINT test_type_uq UNIQUE (name)
 );
 
-DROP TABLE IF EXISTS public.testimonials;
-
-CREATE TABLE IF NOT EXISTS public.testimonials
-(
-    id text COLLATE pg_catalog."default" NOT NULL,
-    comment text COLLATE pg_catalog."default" NOT NULL,
-    rating numeric NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
-    CONSTRAINT testimonials_pkey PRIMARY KEY (id)
-);
-
-DROP TABLE IF EXISTS public.uniques;
-
 CREATE TABLE IF NOT EXISTS public.uniques
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    mentor_id text COLLATE pg_catalog."default" NOT NULL,
-    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    mentor_id integer NOT NULL,
+    uniqueness text COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT unique_pkey PRIMARY KEY (id)
+    CONSTRAINT uniques_pkey PRIMARY KEY (id)
 );
-
-DROP TABLE IF EXISTS public.user_details;
 
 CREATE TABLE IF NOT EXISTS public.user_details
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    class_user_id text COLLATE pg_catalog."default" NOT NULL,
-    user_id text COLLATE pg_catalog."default" NOT NULL,
-    name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    class_user_id integer NOT NULL,
+    user_id integer NOT NULL,
+    name character varying(1000) COLLATE pg_catalog."default" NOT NULL,
     province character varying(100) COLLATE pg_catalog."default" NOT NULL,
     regency character varying(255) COLLATE pg_catalog."default" NOT NULL,
     district character varying(255) COLLATE pg_catalog."default" NOT NULL,
@@ -490,27 +372,40 @@ CREATE TABLE IF NOT EXISTS public.user_details
     CONSTRAINT user_details_uq UNIQUE (phone_number, profile_picture)
 );
 
-DROP TABLE IF EXISTS public.user_testimonials;
+CREATE TABLE IF NOT EXISTS public.user_mentor_testimonials
+(
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id integer NOT NULL,
+    mentor_id integer NOT NULL,
+    comment text COLLATE pg_catalog."default" NOT NULL,
+    rating numeric NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    CONSTRAINT user_mentor_testimonials_pkey PRIMARY KEY (id)
+);
 
 CREATE TABLE IF NOT EXISTS public.user_testimonials
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    user_id text COLLATE pg_catalog."default" NOT NULL,
-    testimonial_id text COLLATE pg_catalog."default" NOT NULL,
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    user_id integer NOT NULL,
+    comment text COLLATE pg_catalog."default" NOT NULL,
+    rating numeric NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
     CONSTRAINT user_testimonials_pkey PRIMARY KEY (id)
 );
 
-DROP TABLE IF EXISTS public.users;
-
 CREATE TABLE IF NOT EXISTS public.users
 (
-    id text COLLATE pg_catalog."default" NOT NULL,
-    role_id text COLLATE pg_catalog."default" NOT NULL,
-    google_id text COLLATE pg_catalog."default",
-    facebook_id text COLLATE pg_catalog."default",
+    id serial NOT NULL,
+    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
+    role_id integer NOT NULL,
+    google_id integer,
+    facebook_id integer,
     email character varying(64) COLLATE pg_catalog."default" NOT NULL,
     password text COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -519,29 +414,6 @@ CREATE TABLE IF NOT EXISTS public.users
     CONSTRAINT users_pkey PRIMARY KEY (id),
     CONSTRAINT users_email_key UNIQUE (email)
 );
-
-DROP TABLE IF EXISTS public.user_mentor_testimonials;
-
-CREATE TABLE IF NOT EXISTS public.user_mentor_testimonials
-(
-    id text NOT NULL,
-    user_id text NOT NULL,
-    mentor_id text NOT NULL,
-    comment text NOT NULL,
-    rating numeric NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
-    CONSTRAINT user_mentor_testimonial_pkey PRIMARY KEY (id)
-);
-
-ALTER TABLE IF EXISTS public.addresses
-    ADD CONSTRAINT user_detail_address_fk FOREIGN KEY (user_detail_id)
-    REFERENCES public.user_details (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
 
 ALTER TABLE IF EXISTS public.class_user_plans
     ADD CONSTRAINT plan_class_user_plan_fk FOREIGN KEY (plan_id)
@@ -618,6 +490,14 @@ ALTER TABLE IF EXISTS public.exercise_submissions
 ALTER TABLE IF EXISTS public.exercises
     ADD CONSTRAINT test_type_exercise_fk FOREIGN KEY (test_type_id)
     REFERENCES public.test_types (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.mentors
+    ADD CONSTRAINT module_mentor_fk FOREIGN KEY (module_id)
+    REFERENCES public.modules (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -775,9 +655,17 @@ ALTER TABLE IF EXISTS public.user_details
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.user_testimonials
-    ADD CONSTRAINT testimonial_user_testimonial_fk FOREIGN KEY (testimonial_id)
-    REFERENCES public.testimonials (id) MATCH SIMPLE
+ALTER TABLE IF EXISTS public.user_mentor_testimonials
+    ADD CONSTRAINT mentor_user_mentor_testimonial_fk FOREIGN KEY (mentor_id)
+    REFERENCES public.mentors (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.user_mentor_testimonials
+    ADD CONSTRAINT user_user_mentor_testimonial_fk FOREIGN KEY (user_id)
+    REFERENCES public.users (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -794,22 +682,6 @@ ALTER TABLE IF EXISTS public.user_testimonials
 ALTER TABLE IF EXISTS public.users
     ADD CONSTRAINT role_user_fk FOREIGN KEY (role_id)
     REFERENCES public.roles (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.user_mentor_testimonials
-    ADD CONSTRAINT user_user_mentor_testimonial_fk FOREIGN KEY (user_id)
-    REFERENCES public.users (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.user_mentor_testimonials
-    ADD CONSTRAINT mentor_user_mentor_testimonial_fk FOREIGN KEY (mentor_id)
-    REFERENCES public.mentors (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
