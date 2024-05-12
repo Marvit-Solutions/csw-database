@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS public.exercise_choices
     uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
     question_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
-    point text COLLATE pg_catalog."default" NOT NULL,
+    score integer NOT NULL,
     is_correct boolean NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -63,24 +63,11 @@ CREATE TABLE IF NOT EXISTS public.exercise_questions
     uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
     exercise_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
-    image text COLLATE pg_catalog."default",
-    point integer NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
-    CONSTRAINT exercise_questions_pkey PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS public.exercise_scores
-(
-    id serial NOT NULL,
-    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
-    submission_id integer NOT NULL,
     score integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT exercise_scores_pkey PRIMARY KEY (id)
+    CONSTRAINT exercise_questions_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.exercise_submissions
@@ -92,6 +79,7 @@ CREATE TABLE IF NOT EXISTS public.exercise_submissions
     started_at timestamp with time zone NOT NULL,
     finished_at timestamp with time zone NOT NULL,
     time_required time without time zone NOT NULL,
+    score integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
@@ -180,7 +168,7 @@ CREATE TABLE IF NOT EXISTS public.quiz_choices
     uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
     question_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
-    point integer NOT NULL,
+    score integer NOT NULL,
     is_correct boolean NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -194,24 +182,11 @@ CREATE TABLE IF NOT EXISTS public.quiz_questions
     uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
     quiz_id integer NOT NULL,
     content text COLLATE pg_catalog."default" NOT NULL,
-    image text COLLATE pg_catalog."default",
-    point integer NOT NULL,
-    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    deleted_at timestamp with time zone,
-    CONSTRAINT quiz_questions_pkey PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS public.quiz_scores
-(
-    id serial NOT NULL,
-    uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
-    submission_id integer NOT NULL,
     score integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
-    CONSTRAINT quiz_scores_pkey PRIMARY KEY (id)
+    CONSTRAINT quiz_questions_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.quiz_submissions
@@ -223,6 +198,7 @@ CREATE TABLE IF NOT EXISTS public.quiz_submissions
     started_at timestamp with time zone NOT NULL,
     finished_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     time_required time without time zone NOT NULL,
+    score integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
@@ -233,13 +209,13 @@ CREATE TABLE IF NOT EXISTS public.quizzes
 (
     id serial NOT NULL,
     uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
-    sub_subject_id integer NOT NULL,
+    subject_id integer NOT NULL,
     test_type_id integer NOT NULL,
     open timestamp with time zone NOT NULL,
     title character varying(50) COLLATE pg_catalog."default" NOT NULL,
     description text COLLATE pg_catalog."default" NOT NULL,
     "time" integer NOT NULL,
-    point integer NOT NULL,
+    max_score integer NOT NULL,
     attempt integer NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -273,13 +249,6 @@ CREATE TABLE IF NOT EXISTS public.schedules
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
     CONSTRAINT schedules_pkey PRIMARY KEY (id)
-);
-
-CREATE TABLE IF NOT EXISTS public.schema_migrations
-(
-    version bigint NOT NULL,
-    dirty boolean NOT NULL,
-    CONSTRAINT schema_migrations_pkey PRIMARY KEY (version)
 );
 
 CREATE TABLE IF NOT EXISTS public.sub_modules
@@ -359,17 +328,17 @@ CREATE TABLE IF NOT EXISTS public.user_details
     uuid uuid NOT NULL DEFAULT uuid_generate_v4(),
     class_user_id integer NOT NULL,
     user_id integer NOT NULL,
+    media_id integer NOT NULL,
     name character varying(1000) COLLATE pg_catalog."default" NOT NULL,
     province character varying(100) COLLATE pg_catalog."default" NOT NULL,
     regency character varying(255) COLLATE pg_catalog."default" NOT NULL,
     district character varying(255) COLLATE pg_catalog."default" NOT NULL,
     phone_number character varying(50) COLLATE pg_catalog."default" NOT NULL,
-    profile_picture text COLLATE pg_catalog."default" NOT NULL,
     created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at timestamp with time zone,
     CONSTRAINT user_details_pkey PRIMARY KEY (id),
-    CONSTRAINT user_details_uq UNIQUE (phone_number, profile_picture)
+    CONSTRAINT user_details_uq UNIQUE (phone_number)
 );
 
 CREATE TABLE IF NOT EXISTS public.user_mentor_testimonials
@@ -415,6 +384,61 @@ CREATE TABLE IF NOT EXISTS public.users
     CONSTRAINT users_email_key UNIQUE (email)
 );
 
+CREATE TABLE IF NOT EXISTS public.medias
+(
+    id serial NOT NULL,
+    uuid uuid NOT NULL,
+    filename character varying(255) NOT NULL,
+    mime character varying(50) NOT NULL,
+    original_filename character varying(255) NOT NULL,
+    description text NOT NULL,
+    created_by integer NOT NULL,
+    updated_by integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.quiz_question_media
+(
+    id serial NOT NULL,
+    uuid uuid NOT NULL,
+    quiz_question_id integer NOT NULL,
+    media_id integer NOT NULL,
+    index integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.exercise_question_media
+(
+    id serial NOT NULL,
+    uuid uuid NOT NULL,
+    exercise_question_id integer NOT NULL,
+    media_id integer NOT NULL,
+    index integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS public.sub_subject_media
+(
+    id serial NOT NULL,
+    uuid uuid NOT NULL,
+    sub_subject_id integer NOT NULL,
+    media_id integer NOT NULL,
+    index integer NOT NULL,
+    created_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at timestamp with time zone NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at timestamp with time zone,
+    PRIMARY KEY (id)
+);
+
 ALTER TABLE IF EXISTS public.class_user_plans
     ADD CONSTRAINT plan_class_user_plan_fk FOREIGN KEY (plan_id)
     REFERENCES public.plans (id) MATCH SIMPLE
@@ -439,14 +463,6 @@ ALTER TABLE IF EXISTS public.exercise_answers
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.exercise_answers
-    ADD CONSTRAINT submission_exercise_answer_fk FOREIGN KEY (submission_id)
-    REFERENCES public.exercise_submissions (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
 ALTER TABLE IF EXISTS public.exercise_choices
     ADD CONSTRAINT question_exercise_choice_fk FOREIGN KEY (question_id)
     REFERENCES public.exercise_questions (id) MATCH SIMPLE
@@ -463,25 +479,17 @@ ALTER TABLE IF EXISTS public.exercise_questions
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.exercise_scores
-    ADD CONSTRAINT submission_exercise_score_fk FOREIGN KEY (submission_id)
-    REFERENCES public.exercise_submissions (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
 ALTER TABLE IF EXISTS public.exercise_submissions
-    ADD CONSTRAINT exercise_exercise_submission_fk FOREIGN KEY (exercise_id)
-    REFERENCES public.exercises (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
-ALTER TABLE IF EXISTS public.exercise_submissions
-    ADD CONSTRAINT user_exercise_submission_fk FOREIGN KEY (user_id)
+    ADD CONSTRAINT user_exercise_submission FOREIGN KEY (user_id)
     REFERENCES public.users (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.exercise_submissions
+    ADD CONSTRAINT exercise_exercise_submissiion FOREIGN KEY (exercise_id)
+    REFERENCES public.exercises (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -551,14 +559,6 @@ ALTER TABLE IF EXISTS public.quiz_questions
     NOT VALID;
 
 
-ALTER TABLE IF EXISTS public.quiz_scores
-    ADD CONSTRAINT submission_quiz_score_fk FOREIGN KEY (submission_id)
-    REFERENCES public.quiz_submissions (id) MATCH SIMPLE
-    ON UPDATE NO ACTION
-    ON DELETE NO ACTION
-    NOT VALID;
-
-
 ALTER TABLE IF EXISTS public.quiz_submissions
     ADD CONSTRAINT quiz_quiz_submission_fk FOREIGN KEY (quiz_id)
     REFERENCES public.quizzes (id) MATCH SIMPLE
@@ -576,8 +576,8 @@ ALTER TABLE IF EXISTS public.quiz_submissions
 
 
 ALTER TABLE IF EXISTS public.quizzes
-    ADD CONSTRAINT sub_subject_quiz_fk FOREIGN KEY (sub_subject_id)
-    REFERENCES public.sub_subjects (id) MATCH SIMPLE
+    ADD CONSTRAINT subject_quiz_fk FOREIGN KEY (subject_id)
+    REFERENCES public.subjects (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
@@ -655,6 +655,14 @@ ALTER TABLE IF EXISTS public.user_details
     NOT VALID;
 
 
+ALTER TABLE IF EXISTS public.user_details
+    ADD CONSTRAINT media_user_fk FOREIGN KEY (media_id)
+    REFERENCES public.medias (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
 ALTER TABLE IF EXISTS public.user_mentor_testimonials
     ADD CONSTRAINT mentor_user_mentor_testimonial_fk FOREIGN KEY (mentor_id)
     REFERENCES public.mentors (id) MATCH SIMPLE
@@ -682,6 +690,54 @@ ALTER TABLE IF EXISTS public.user_testimonials
 ALTER TABLE IF EXISTS public.users
     ADD CONSTRAINT role_user_fk FOREIGN KEY (role_id)
     REFERENCES public.roles (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.quiz_question_media
+    ADD CONSTRAINT quiz_question_quiz_question_media FOREIGN KEY (quiz_question_id)
+    REFERENCES public.quiz_questions (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.quiz_question_media
+    ADD CONSTRAINT media_quiz_question_media FOREIGN KEY (media_id)
+    REFERENCES public.medias (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.exercise_question_media
+    ADD CONSTRAINT exercise_question_exercise_question_media FOREIGN KEY (exercise_question_id)
+    REFERENCES public.exercise_questions (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.exercise_question_media
+    ADD CONSTRAINT media_exercise_question_media FOREIGN KEY (media_id)
+    REFERENCES public.medias (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.sub_subject_media
+    ADD CONSTRAINT sub_subject_sub_subject_media FOREIGN KEY (sub_subject_id)
+    REFERENCES public.sub_subjects (id) MATCH SIMPLE
+    ON UPDATE NO ACTION
+    ON DELETE NO ACTION
+    NOT VALID;
+
+
+ALTER TABLE IF EXISTS public.sub_subject_media
+    ADD CONSTRAINT media_sub_subject_media FOREIGN KEY (media_id)
+    REFERENCES public.medias (id) MATCH SIMPLE
     ON UPDATE NO ACTION
     ON DELETE NO ACTION
     NOT VALID;
