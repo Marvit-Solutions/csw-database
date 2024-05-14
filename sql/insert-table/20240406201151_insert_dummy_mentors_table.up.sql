@@ -3,7 +3,7 @@ INSERT INTO
 VALUES
         (
                 34,
-                2,
+                1,
                 'Tutor 1',
                 'Tutor dengan pengalaman mengajar yang luas',
                 'Mengajar dengan penuh semangat!',
@@ -12,7 +12,7 @@ VALUES
         ),
         (
                 35,
-                2,
+                1,
                 'Tutor 2',
                 'Tutor yang ramah dan komunikatif',
                 'Belajar bersama untuk sukses!',
@@ -21,7 +21,7 @@ VALUES
         ),
         (
                 36,
-                3,
+                2,
                 'Tutor 3',
                 'Tutor ahli dalam materi bimbingan belajar',
                 'Bersama menuju keberhasilan!',
