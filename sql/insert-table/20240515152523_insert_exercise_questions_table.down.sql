@@ -1,0 +1,1 @@
+TRUNCATE TABLE public.exercise_questions CASCADE;

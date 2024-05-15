@@ -6,6 +6,7 @@ INSERT INTO
         total_question,
         description,
         time,
+        attempt,
         created_by,
         updated_by
     )
@@ -18,6 +19,7 @@ VALUES
         110,
         'Exercise 1 description',
         120,
+        5,
         1,
         1
     ),
@@ -28,6 +30,7 @@ VALUES
         110,
         'Exercise 2 description',
         120,
+        5,
         1,
         1
     ),
@@ -39,6 +42,7 @@ VALUES
         40,
         'Exercise 1 description',
         90,
+        5,
         1,
         1
     ),
@@ -49,6 +53,7 @@ VALUES
         40,
         'Exercise 2 description',
         90,
+        5,
         1,
         1
     );
