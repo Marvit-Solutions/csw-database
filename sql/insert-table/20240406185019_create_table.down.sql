@@ -1,8 +1,8 @@
-DROP TABLE IF EXISTS public.sub_subject_media CASCADE;
+DROP TABLE IF EXISTS public.sub_subject_medias CASCADE;
 
-DROP TABLE IF EXISTS public.exercise_question_media CASCADE;
+DROP TABLE IF EXISTS public.exercise_question_medias CASCADE;
 
-DROP TABLE IF EXISTS public.quiz_question_media CASCADE;
+DROP TABLE IF EXISTS public.quiz_question_medias CASCADE;
 
 DROP TABLE IF EXISTS public.medias CASCADE;
 
@@ -56,4 +56,4 @@ DROP TABLE IF EXISTS public.exercise_answers CASCADE;
 
 DROP TABLE IF EXISTS public.class_users CASCADE;
 
-DROP TABLE IF EXISTS public.class_user_plans CASCADE;
+DROP TABLE IF EXISTS public.user_plans CASCADE;
